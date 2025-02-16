@@ -81,19 +81,16 @@ void inserir(Arvore* arvore, char elemento, char lado) {
 
 //função auxiliar que exibe os elementos da árvore
 static void imprime (ArvoreNo* r){
-  printf("% c ", r->info);
-  imprime(r->esquerda);
-  imprime(r->direita);
-
+    if (r != NULL){
+        printf("% c ", r->info);
+        imprime(r->esquerda);
+        imprime(r->direita);
+    }
 }
 
 //função que imprime a árvore a partir da raiz
 void imprimeArvore (Arvore* a){
-   if (a != NULL && a->raiz != NULL){
     imprime(a->raiz);
-  } else {
-    printf("A árvore está vazia ou não foi criada.");
-  }
 }
 
 //função auxiliar que libera a memória
@@ -220,7 +217,7 @@ void menu() {
 
         case 9:
           printf("Saindo e liberando espaço na memória...\n");
-          liberarMemoria(arvore->raiz);
+          //liberarMemoria(arvore->raiz);
           liberarRaiz(arvore);
           break;
     }
