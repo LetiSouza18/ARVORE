@@ -35,62 +35,58 @@ ArvoreNo* criarNo (char elemento, ArvoreNo* esq, ArvoreNo* dir){
 Arvore* criarArvore (ArvoreNo* r){
   Arvore* a = (Arvore*) malloc(sizeof(Arvore));               //a = ponteiro
   a->raiz = r;
-
+  printf("\nÁrvore criada com sucesso: ");
   return a;
 }
 
+//função recursiva para percorrer a árvore e inserir o elemento
+static ArvoreNo* inserir(ArvoreNo* atual, char elemento) {
+  if (atual == NULL) {
+    return criarNo(elemento, NULL, NULL);
+  }
+
+  if (elemento < atual->info) {
+    atual->esquerda = inserir(atual->esquerda, elemento);
+  } else if (elemento > atual->info) {
+    atual->direita = inserir(atual->direita, elemento);
+  } else {
+    printf("Elemento já inserido na árvore.\n");
+  }
+
+  return atual;
+}
+
 //função que insere os elementos na árvore
-void inserir(Arvore* arvore, char elemento, char lado) {
+void inserirElemento(Arvore* arvore, char elemento) {
   if (arvore == NULL) {
     printf("Crie uma árvore primeiro.");
     return;
   };
 
   if (arvore->raiz == NULL) {
-      arvore->raiz = criarNo(elemento, NULL, NULL);
-      return;
-  }
-
-  ArvoreNo* atual = arvore->raiz;
-  ArvoreNo* novo = criarNo(elemento, NULL, NULL);
-
-  if (!novo) {
-    printf("É preciso inserir corretamente o elemento que deseja adicionar.");
+    arvore->raiz = criarNo(elemento, NULL, NULL);
     return;
-  };
-
-  if (lado == 'E' || lado == 'e') {
-    if (atual->esquerda == NULL) {
-      atual->esquerda = novo;
-      return;
-    } else {
-      printf("Este lado já está preenchido.\n");
-      atual = atual->esquerda;
-    }
-  } else {
-    if (atual->direita == NULL) {
-      atual->direita = novo;
-      return;
-    } else {
-      printf("Este lado já está preenchido.\n");
-      atual = atual->direita;
-    }
   }
+
+  inserir(arvore->raiz, elemento);
 }
 
 
 //função auxiliar que exibe os elementos da árvore
 static void imprime (ArvoreNo* r){
-    if (r != NULL){
-        printf("% c ", r->info);
-        imprime(r->esquerda);
-        imprime(r->direita);
-    }
+  if (r != NULL){
+    printf("% c ", r->info);
+    imprime(r->esquerda);
+    imprime(r->direita);
+  }
 }
 
 //função que imprime a árvore a partir da raiz
 void imprimeArvore (Arvore* a){
-    imprime(a->raiz);
+  if (a == NULL) {
+    printf("Crie a árvore primeiro.");
+  };
+  imprime(a->raiz);
 }
 
 //função auxiliar que libera a memória
@@ -144,11 +140,14 @@ ArvoreNo* buscaRaiz (Arvore* a, char c){
 }
 
 void menu() {
+  printf("\nSEJA BEM-VINDO(A) À ÁRVORE DE BUSCA BINÁRIA COM AS LETRAS DO ALFABETO\n");
+
   int opcao;
 
   do {
     printf("\n====== MENU ======\n");
-    printf("1 - Criar árvore\n");
+    printf("0 - Ir para dicas\n");
+    printf("1 - Criar árvore binária de busca\n");
     printf("2 - Inserir elemento\n");
     printf("3 - Remover elemento\n");
     printf("4 - Imprimir árvore (Pré-ordem)\n");
@@ -162,16 +161,20 @@ void menu() {
 
     switch (opcao) {
       char elemento;
-      char lado;
       Arvore* arvore;
+
+      case 0:
+        printf("\nA cada vez que o programa roda só é aconselhado criar somente uma árvore, pois ao criar outra ela irá reescrever a anterior.");
+        printf("\nSempre utilize o comando 9 para sair do programa e liberar espaço para evitar vazamento de memória.");
+        printf("\nUtilize os caracteres do alfabeto para que árvore respeita a tabela ASCII ao inserir os elementos.");
+        printf("\nAproveite nosso código, prof!");
+        break;
 
       case 1:
         printf("\nDigite o elemento da raiz: ");
         scanf(" %c", &elemento);
 
         arvore = criarArvore(criarNo(elemento, NULL, NULL));
-
-        printf("\nÁrvore criada com sucesso: ");
         imprimeArvore(arvore);
         printf("\n");
         break;
@@ -179,9 +182,7 @@ void menu() {
       case 2:
         printf("\nDigite o elemento a ser inserido: ");
         scanf(" %c", &elemento);
-        printf("\nDigite o lado em que o elemento deve ser inserido ('e' -> esquerda e 'd' -> direita): ");
-        scanf(" %c", &lado);
-        inserir(arvore, elemento, lado);
+        inserirElemento(arvore, elemento);
         printf("\n Árvore atual: ");
         imprimeArvore(arvore);
         printf("\n");
@@ -217,7 +218,6 @@ void menu() {
 
         case 9:
           printf("Saindo e liberando espaço na memória...\n");
-          //liberarMemoria(arvore->raiz);
           liberarRaiz(arvore);
           break;
     }
